@@ -1,10 +1,10 @@
-import os
+from pathlib import Path
 
 
 def check_folder(name):
-    path = os.path.expanduser(name)
-    if os.path.exists(path):
+    path = Path(name).expanduser()
+    if path.exists():
         return True
     else:
-        os.makedirs(path, exist_ok=True)
+        path.mkdir(parents=True, exist_ok=True)
         return False

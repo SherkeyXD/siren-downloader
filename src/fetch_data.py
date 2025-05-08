@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 import json
 import datetime
 import requests
@@ -34,7 +34,6 @@ def fetch_all_songs():
                 "track": "",
                 "publish": "",
                 "instrumental": 0,
-                # "download": ""
             }
         )
 
@@ -82,11 +81,11 @@ def fetch_album_data(song_list):
         thread.join()
 
     # 读取匹配列表（官网名称：网易云名称）
-    with open("conf/match.json", "r", encoding="utf-8") as json_file:
+    match_path = Path("conf/match.json")
+    with match_path.open("r", encoding="utf-8") as json_file:
         match_list = json.load(json_file)
 
     # 根据本地规则，匹配官网名称到网易云名称
-    # https://music.163.com/#/artist/album?id=32540734&limit=1000
     for album in album_list:
         if album["album"] in match_list:
             album["album_ncm"] = match_list[album["album"]]
@@ -130,7 +129,7 @@ def fetch_song_data(song_list):
             url = f"https://monster-siren.hypergryph.com/api/song/{song['title_id']}"
             song_data = requests.get(url).json()
             song["source"] = song_data["data"]["sourceUrl"]
-            song["format"] = os.path.splitext(song["source"])[1].replace(".", "")
+            song["format"] = Path(song["source"]).suffix.lstrip(".")
 
     # 创建线程
     threads = []

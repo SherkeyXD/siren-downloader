@@ -2,6 +2,7 @@ import os
 import tqdm
 import requests
 import send2trash
+from pathlib import Path
 from mutagen.flac import FLAC, Picture
 from mutagen.id3 import ID3, TIT2, TPE1, TRCK, TALB, TDRC, TCON, TPE2, TPOS, APIC
 
@@ -14,12 +15,11 @@ from src.fix_name import fix_name, fix_folder
 def download_music(song):
     album_name = song["album"]
     song_name = song["title"]
-    album_name = song["album"]
 
-    expanded_path = os.path.expanduser(load_config("default", "download_path"))
-    album_path = os.path.join(expanded_path, fix_folder(album_name))
-    song_path = os.path.join(album_path, fix_name(song_name)) + "." + song["format"]
-    flac_path = os.path.join(album_path, fix_name(song_name)) + ".flac"
+    expanded_path = Path(load_config("default", "download_path")).expanduser()
+    album_path = expanded_path / fix_folder(album_name)
+    song_path = album_path / f"{fix_name(song_name)}.{song['format']}"
+    flac_path = album_path / f"{fix_name(song_name)}.flac"
 
     # 开始下载
     check_folder(album_path)
@@ -28,7 +28,7 @@ def download_music(song):
     # 显示进度条
     song_file = requests.get(song["source"], stream=True)
     file_size = int(song_file.headers.get("content-length", 0))
-    with open(song_path, "wb") as file, tqdm.tqdm(
+    with song_path.open("wb") as file, tqdm.tqdm(
         desc=f"正在下载：{song_name} [{album_name}]",
         total=file_size,
         unit="B",

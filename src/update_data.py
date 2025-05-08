@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 import json
 
 from src.load_config import load_config
@@ -7,9 +7,11 @@ from src.fetch_data import fetch_album_data, fetch_song_data
 
 
 def update_data(song_list):
+    data_path = Path("conf/data.json")
+
     # 本地是否有data.json
-    if os.path.exists("conf/data.json"):
-        with open("conf/data.json", "r", encoding="utf-8") as json_file:
+    if data_path.exists():
+        with data_path.open("r", encoding="utf-8") as json_file:
             song_list_local = json.load(json_file)
     else:
         song_list_local = song_list
@@ -41,7 +43,7 @@ def update_data(song_list):
 
     # 保存到data.json
     print("成功保存数据到本地")
-    with open("conf/data.json", "w", encoding="utf-8") as json_file:
+    with data_path.open("w", encoding="utf-8") as json_file:
         json.dump(song_list_local, json_file, ensure_ascii=False, indent=4)
 
     return song_list_local
