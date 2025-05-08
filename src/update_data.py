@@ -2,7 +2,6 @@ from pathlib import Path
 import json
 
 from src.load_config import load_config
-from src.calc_instrument_num import calc_instrument_num
 from src.fetch_data import fetch_album_data, fetch_song_data
 
 
@@ -33,7 +32,7 @@ def update_data(song_list):
 
     # 更新专辑数据：全部
     if not load_config("debug", "skip_album_update", bool=True):
-        print(f"正在更新专辑数据")
+        print("正在更新专辑数据")
         fetch_album_data(song_list_local)
 
     # 更新歌曲数据：仅需要下载
