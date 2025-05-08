@@ -27,11 +27,11 @@ def download_music(song):
 
     # 显示进度条
     song_file = requests.get(song["source"], stream=True)
-    file_size = int(song_file.headers.get('content-length', 0))
+    file_size = int(song_file.headers.get("content-length", 0))
     with open(song_path, "wb") as file, tqdm.tqdm(
         desc=f"正在下载：{song_name} [{album_name}]",
         total=file_size,
-        unit='B',
+        unit="B",
         unit_scale=True,
         unit_divisor=1024,
     ) as bar:
@@ -62,7 +62,7 @@ def download_music(song):
         # 写入封面
         cover = Picture()
         cover.type = 3
-        cover.mime = 'image/jpeg'
+        cover.mime = "image/jpeg"
         cover.data = compare_cover(song)
         flac.clear_pictures()
         flac.add_picture(cover)

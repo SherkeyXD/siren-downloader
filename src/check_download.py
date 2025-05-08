@@ -7,7 +7,10 @@ def need_download(song):
         return False
 
     # 伴奏
-    if load_config("default", "skip_instrumental", bool=True) and song["instrumental"] == 1:
+    if (
+        load_config("default", "skip_instrumental", bool=True)
+        and song["instrumental"] == 1
+    ):
         return False
 
     return True

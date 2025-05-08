@@ -1,17 +1,18 @@
 # 移除文件名中的非法字符
 def fix_name(name):
-    name = (name
-     .replace("  ", " ")
-     .replace("<", " ")
-     .replace(">", " ")
-     .replace(":", " ")
-     .replace("\'", "")
-     .replace("\"", "")
-     .replace("\\", " ")
-     .replace("/", " ")
-     .replace("|", " ")
-     .replace("?", "")
-     .replace("*", " "))
+    name = (
+        name.replace("  ", " ")
+        .replace("<", " ")
+        .replace(">", " ")
+        .replace(":", " ")
+        .replace("'", "")
+        .replace('"', "")
+        .replace("\\", " ")
+        .replace("/", " ")
+        .replace("|", " ")
+        .replace("?", "")
+        .replace("*", " ")
+    )
     return name
 
 

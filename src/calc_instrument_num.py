@@ -1,4 +1,3 @@
-
 def calc_instrument_num(song_list):
     instrumental = 0
     for song in song_list["songs"]:

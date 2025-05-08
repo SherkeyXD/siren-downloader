@@ -10,11 +10,7 @@ from src.calc_instrument_num import calc_instrument_num
 
 
 def fetch_all_songs():
-    song_list = {
-        "count": 0,
-        "instrumental": 0,
-        "songs": []
-    }
+    song_list = {"count": 0, "instrumental": 0, "songs": []}
 
     # 从官网获取歌单
     response = requests.get("https://monster-siren.hypergryph.com/api/songs").json()
@@ -25,20 +21,22 @@ def fetch_all_songs():
 
     # 写入歌曲信息
     for list in response["data"]["list"]:
-        song_list["songs"].append({
-            "title": list["name"],
-            "title_id": list["cid"],
-            "album": "",
-            "album_id": list["albumCid"],
-            "source": "",
-            "cover": "",
-            "cover_ncm": "",
-            "format": "",
-            "track": "",
-            "publish": "",
-            "instrumental": 0,
-            # "download": ""
-        })
+        song_list["songs"].append(
+            {
+                "title": list["name"],
+                "title_id": list["cid"],
+                "album": "",
+                "album_id": list["albumCid"],
+                "source": "",
+                "cover": "",
+                "cover_ncm": "",
+                "format": "",
+                "track": "",
+                "publish": "",
+                "instrumental": 0,
+                # "download": ""
+            }
+        )
 
     # 默认新歌在最前，需要反转排序
     song_list["songs"].reverse()
@@ -53,12 +51,9 @@ def fetch_album_data(song_list):
     # 将需要下载的专辑加入album_list
     album_list = []
     for song in song_list["songs"]:
-        album_list.append({
-            "album_id": song["album_id"],
-            "album": "",
-            "album_ncm": "",
-            "cover": ""
-        })
+        album_list.append(
+            {"album_id": song["album_id"], "album": "", "album_ncm": "", "cover": ""}
+        )
 
     # 去重：先转为元组，再转为列表
     album_list = list({tuple(album.items()) for album in album_list})
@@ -66,9 +61,13 @@ def fetch_album_data(song_list):
 
     # 获取单个专辑信息
     def fetch_album(album):
-        url = f"https://monster-siren.hypergryph.com/api/album/{album['album_id']}/detail"
+        url = (
+            f"https://monster-siren.hypergryph.com/api/album/{album['album_id']}/detail"
+        )
         album_data = requests.get(url).json()
-        album["album"] = album_data["data"]["name"].strip()  # 部分专辑名称后有个空格（乌鱼子）
+        album["album"] = album_data["data"][
+            "name"
+        ].strip()  # 部分专辑名称后有个空格（乌鱼子）
         album["cover"] = album_data["data"]["coverUrl"]
 
     # 创建线程
@@ -97,7 +96,9 @@ def fetch_album_data(song_list):
     # 保存到song_list
     for song in song_list["songs"]:
         # 查找album_list对应album_id的字典
-        album_dict = next(album for album in album_list if album["album_id"] == song["album_id"])
+        album_dict = next(
+            album for album in album_list if album["album_id"] == song["album_id"]
+        )
         song["album"] = album_dict["album_ncm"]  # 使用网易云名称作为专辑名
         song["cover"] = album_dict["cover"]
 
@@ -106,11 +107,19 @@ def fetch_album_data(song_list):
     ncm_response = requests.get(api_url + "/artist/album?id=32540734&limit=1000").json()
     for song in song_list["songs"]:
         try:
-            ncm_dict = next(album for album in ncm_response["hotAlbums"] if album["name"] == song["album"])
+            ncm_dict = next(
+                album
+                for album in ncm_response["hotAlbums"]
+                if album["name"] == song["album"]
+            )
         except StopIteration:
-            print(f"跳过：{song['title']}所在的专辑{song['album']}与网易云名称不匹配，请更新匹配规则")
+            print(
+                f"跳过：{song['title']}所在的专辑{song['album']}与网易云名称不匹配，请更新匹配规则"
+            )
             continue
-        song["publish"] = datetime.datetime.fromtimestamp(ncm_dict["publishTime"] / 1000).strftime("%Y-%m-%d")
+        song["publish"] = datetime.datetime.fromtimestamp(
+            ncm_dict["publishTime"] / 1000
+        ).strftime("%Y-%m-%d")
         song["cover_ncm"] = ncm_dict["picUrl"]
 
 
